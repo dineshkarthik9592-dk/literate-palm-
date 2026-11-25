@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BATCHZERO — Enterprise Product Traceability & Recall Platform</title>
+    <style>
+        :root {
+            --bg-base: #09090b;
+            --bg-surface: #121215;
+            --bg-card: #18181b;
+            --bg-card-hover: #222226;
+            --border-subtle: #27272a;
+            --border-hover: #3f3f46;
+            --border-accent: #38bdf8;
+            --text-main: #f4f4f5;
+            --text-muted: #a1a1aa;
+            --text-subtle: #71717a;
+            --accent-blue: #38bdf8;
+            --accent-indigo: #818cf8;
+            --accent-green: #34d399;
+            --accent-red: #f87171;
+            --accent-amber: #fbbf24;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+        
+        body {
+            background-color: var(--bg-base);
+            background-image: radial-gradient(circle at 50% 0%, #18181b 0%, #09090b 70%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* Top Header */
+        header {
+            background: #09090b;
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 14px 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand-container {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .brand-logo {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #27272a 0%, #18181b 100%);
+            border: 1px solid #3f3f46;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+
+        .brand-title {
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+            color: #ffffff;
+        }
+
+        .brand-tag {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.6px;
+            padding: 2px 8px;
+            border-radius: 6px;
+            background: #27272a;
+            color: #38bdf8;
+            border: 1px solid #3f3f46;
+            text-transform: uppercase;
+        }
+
+        .header-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .meta-pill {
+            background: #18181b;
+            border: 1px solid var(--border-subtle);
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pulse-status {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+            box-shadow: 0 0 8px #10b981;
+        }
+
+        /* Navigation Bar */
+        nav {
+            background: #121215;
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 8px 28px;
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-muted);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .nav-btn svg {
+            width: 15px;
+            height: 15px;
+        }
+
+        .nav-btn:hover {
+            background: #18181b;
+            color: #ffffff;
+            border-color: #27272a;
+        }
+
+        .nav-btn.active {
+            background: #27272a;
+            border-color: #3f3f46;
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .nav-btn.active svg {
+            stroke: #38bdf8;
+        }
+
+        /* Main Workspace */
+        main {
+            flex: 1;
+            max-width: 1260px;
+            width: 100%;
+            margin: 20px auto;
+            padding: 0 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Ash Cards */
+        .ash-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 22px;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+            transition: border-color 0.2s ease;
+        }
+
+        .ash-card:hover {
+            border-color: var(--border-hover);
+        }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        @media(max-width: 900px) { .grid-2 { grid-template-columns: 1fr; } }
+
+        /* Buttons */
+        .btn-ash-primary {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: #ffffff;
+            border: 1px solid #3b82f6;
+            font-weight: 600;
+            padding: 10px 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-ash-primary:hover {
+            opacity: 0.95;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+        }
+
+        .btn-ash-subtle {
+            background: #18181b;
+            border: 1px solid var(--border-subtle);
+            color: #e4e4e7;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .btn-ash-subtle:hover {
+            background: #27272a;
+            border-color: #3f3f46;
+            color: #ffffff;
+        }
+
+        /* FIXED 2x2 KPI Metric Cards (No overlap, no clipped words!) */
+        .kpi-container-2x2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .kpi-box {
+            background: #18181b;
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            min-width: 0;
+            transition: border-color 0.2s;
+        }
+
+        .kpi-box:hover {
+            border-color: #3f3f46;
+        }
+
+        .kpi-icon-wrap {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .kpi-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            min-width: 0;
+            flex: 1;
+        }
+
+        .kpi-title {
+            font-size: 10px;
+            color: #a1a1aa;
+            font-weight: 700;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .kpi-number {
+            font-size: 18px;
+            font-weight: 800;
+            line-height: 1.2;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Graph Canvas */
+        .graph-viewport {
+            position: relative;
+            height: 420px;
+            background: #09090b;
+            border-radius: 14px;
+            border: 1px solid var(--border-subtle);
+            overflow: hidden;
+            margin: 16px 0;
+        }
+
+        /* Graph Node Styling */
+        .graph-node {
+            position: absolute;
+            width: 148px;
+            padding: 10px 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 10;
+            background: #18181b;
+            border: 1.5px solid var(--border-subtle);
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .graph-node:hover {
+            transform: translateY(-3px) scale(1.03);
+            border-color: #52525b;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+            z-index: 20;
+        }
+
+        .node-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .node-icon-circle {
+            width: 26px;
+            height: 26px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            background: #27272a;
+        }
+
+        /* Categorized Node Borders & Accents */
+        .node-m { border-color: #9333ea; top: 45%; left: 3%; }
+        .node-m .node-icon-circle { color: #c084fc; }
+
+        .node-w1 { border-color: #0284c7; top: 18%; left: 32%; }
+        .node-w1 .node-icon-circle { color: #38bdf8; }
+
+        .node-w2 { border-color: #52525b; top: 72%; left: 32%; opacity: 0.6; }
+        .node-w2 .node-icon-circle { color: #a1a1aa; }
+
+        .node-d1 { border-color: #059669; top: 14%; left: 60%; }
+        .node-d1 .node-icon-circle { color: #34d399; }
+
+        .node-d2 { border-color: #059669; top: 56%; left: 60%; }
+        .node-d2 .node-icon-circle { color: #34d399; }
+
+        .node-r1 { border-color: #d97706; top: 7%; left: 85%; }
+        .node-r1 .node-icon-circle { color: #fbbf24; }
+
+        .node-r2 { border-color: #d97706; top: 36%; left: 85%; }
+        .node-r2 .node-icon-circle { color: #fbbf24; }
+
+        .node-r3 { border-color: #d97706; top: 68%; left: 85%; }
+        .node-r3 .node-icon-circle { color: #fbbf24; }
+
+        /* Contaminated / Quarantined Pulsing State */
+        .pulse-blast {
+            animation: blastWave 1.8s infinite !important;
+            background: #2a0b10 !important;
+            border-color: #f43f5e !important;
+        }
+
+        @keyframes blastWave {
+            0% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.6); }
+            70% { box-shadow: 0 0 0 12px rgba(244, 63, 94, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0); }
+        }
+
+        /* Clean Tables with generous padding */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            margin-top: 12px;
+        }
+
+        th {
+            text-align: left;
+            padding: 12px 14px;
+            background: #18181b;
+            color: #a1a1aa;
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-subtle);
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border-subtle);
+            color: #d4d4d8;
+        }
+
+        tr:hover td {
+            background: #1a1a1e;
+            color: #ffffff;
+        }
+
+        /* Console */
+        .terminal-box {
+            background: #09090b;
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 16px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 12px;
+            height: 200px;
+            overflow-y: auto;
+            color: #7dd3fc;
+            line-height: 1.6;
+        }
+
+        /* Digital Kill Switch Banner */
+        .kill-switch-box {
+            border: 1.5px solid #ef4444;
+            background: #18090b;
+            border-radius: 14px;
+            padding: 20px;
+            margin-top: 16px;
+        }
+
+        /* Tab Visibility */
+        .tab-pane { display: none; }
+        .tab-pane.active { display: block; }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="brand-container">
+            <div class="brand-logo">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                </svg>
+            </div>
+            <div>
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <span class="brand-title">BATCHZERO</span>
+                    <span class="brand-tag">Enterprise Traceability</span>
+                </div>
+                <div style="font-size:11px; color:var(--text-muted);">CSE 213 Advanced Java • Graph Algorithmic Engine</div>
+            </div>
+        </div>
+
+        <div class="header-meta">
+            <div class="meta-pill">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                Faculty Evaluator: <strong style="color:#38bdf8; margin-left:4px;">Dr. Anwesha Kashyap</strong>
+            </div>
+            <div class="meta-pill">
+                <span class="pulse-status"></span>
+                <span style="color:#34d399; font-weight:700;">Engine Active</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs (Only 4 Clean Operational Modules) -->
+    <nav>
+        <button class="nav-btn active" onclick="switchTab('graph', this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="18" cy="5" r="3"></circle>
+                <circle cx="6" cy="12" r="3"></circle>
+                <circle cx="18" cy="19" r="3"></circle>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+            </svg>
+            Network Graph Explorer
+        </button>
+
+        <button class="nav-btn" onclick="switchTab('trace', this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+            </svg>
+            Algorithmic BFS Trace
+        </button>
+
+        <button class="nav-btn" onclick="switchTab('recall', this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                <line x1="12" y1="9" x2="12" y2="13"></line>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            Recall Command Center & Kill-Switch
+        </button>
+
+        <button class="nav-btn" onclick="switchTab('ledger', this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                <line x1="12" y1="22.08" x2="12" y2="12"></line>
+            </svg>
+            Shipment Ledger & Dispatch
+        </button>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main>
+
+        <!-- ========================================== -->
+        <!-- TAB 1: GRAPH TOPOLOGY                      -->
+        <!-- ========================================== -->
+        <div id="tab-graph" class="tab-pane active">
+            <div class="ash-card">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+                    <div>
+                        <h2 style="font-size:16px; font-weight:700;">Supply Chain Directed Graph: G = (V, E)</h2>
+                        <p style="font-size:12px; color:var(--text-muted); margin-top:3px;">
+                            Batch: <strong style="color:#fde047;">BATCH-101 (Amoxicillin 500mg)</strong> • 8 Tiered Nodes & 6 Directed Shipments
+                        </p>
+                    </div>
+                    <div style="display:flex; gap:10px;">
+                        <button class="btn-ash-subtle" onclick="resetGraphView()">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
+                            Reset Canvas
+                        </button>
+                        <button class="btn-ash-primary" onclick="executeTraceFromGraph()">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                            Execute BFS Trace
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Graph Canvas -->
+                <div class="graph-viewport" id="canvasViewport">
+                    <svg style="position:absolute; width:100%; height:100%; pointer-events:none;">
+                        <defs>
+                            <marker id="arr-def" viewBox="0 0 10 10" refX="24" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                <path d="M 0 1 L 10 5 L 0 9 z" fill="#3f3f46"/>
+                            </marker>
+                            <marker id="arr-alert" viewBox="0 0 10 10" refX="24" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                <path d="M 0 1 L 10 5 L 0 9 z" fill="#f43f5e"/>
+                            </marker>
+                        </defs>
+                        <g id="svgConnections"></g>
+                    </svg>
+
+                    <!-- Designed Nodes with Custom SVG Icons -->
+
+                    <!-- M1: Manufacturer -->
+                    <div id="node-M1" class="graph-node node-m" onclick="inspectNode('M1')">
+                        <div class="node-header">
+                            <div class="node-icon-circle">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M2 20h20"></path><path d="M5 20V8l7 4V4l7 4v12"></path>
+                                </svg>
+                            </div>
+                            <div style="min-width:0;">
+                                <div style="font-size:9px; font-weight:700; color:#c084fc;">ORIGIN PLANT</div>
+                                <strong style="font-size:12px; color:#ffffff; white-space:nowrap;">M1: Apex Pharma</strong>
+                            </div>
+                        </div>
+                        <div style="font-size:10px; color:#a1a1aa; margin-top:2px;">Hyderabad, TS</div>
+                    </div>
+
+                    <!-- W1: Warehouse Hub -->
+                    <div id="node-W1" class="graph-node node-w1" onclick="inspectNode('W1')">
+                        <div class="node-header">
+                            <div class="node-icon-circle">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M22 8.35V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8.35A2 2 0 0 1 3.26 6.5l8-3.2a2 2 0 0 1 1.48 0l8 3.2A2 2 0 0 1 22 8.35Z"></path>
+                                </svg>
+                            </div>
+                            <div style="min-width:0;">
+                                <div style="font-size:9px; font-weight:700; color:#38bdf8;">CENTRAL HUB</div>
+                                <strong style="font-size:12px; color:#ffffff; white-space:nowrap;">W1: Central Depot</strong>
+                            </div>
+                        </div>
+                        <div style="font-size:10px; color:#a1a1aa; margin-top:2px;">Guntur, AP</div>
+                    </div>
+
+                    <!-- W2: Secondary Depot (Safe) -->
+                    <div id="node-W2" class="graph-node node-w2" onclick="inspectNode('W2')">
+                        <div class="node-header">
+                            <div class="node-icon-circle">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"></path><path d="M4 6v12a2 2 0 0 0 2 2h14v-4"></path>
+                                </svg>
+                            </div>
+                            <div style="min-width:0;">
+                                <div style="font-size:9px; font-weight:700; color:#a1a1aa;">DEPOT (SAFE)</div>
+                                <strong style="font-size:12px; color:#cbd5e1; white-space:nowrap;">W2: Coastal Depot</strong>
+                            </div>
+                        </div>
+                        <div style="font-size:10px; color:#71717a; margin-top:2px;">Vijayawada, AP</div>
+                    </div>
+
+                    <!-- D1: Distributor -->
+                    <div id="node-D1" class="graph-node node-d1" onclick="inspectNode('D1')">
+                        <div class="node-header">
+                            <div class="node-icon-circle">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                                    <circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle>
+                                </svg>
+                            </div>
+                            <div style="min-width:0;">
+                                <div style="font-size:9px; font-weight:700; color:#34d399;">DISTRIBUTOR</div>
+                                <strong style="font-size:12px; color:#ffffff; white-space:nowrap;">D1: MedLife</strong>
+                            </div>
+                        </div>
+                        <div style="font-size:10px; color:#a1a1aa; margin-top:2px;">Amaravati, AP</div>
+                    </div>
+
+                    <!-- D2: Distributor -->
+                    <div id="node-D2" class="graph-node node-d2" onclick="inspectNode('D2')">
+                        <div class="node-header">
+                            <div class="node-icon-circle">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 8"></polygon>
+                                    <circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle>
+                                </svg>
+                            </div>
+                            <div style="min-width:0;">
+                                <div style="font-size:9px; font-weight:700; color:#34d399;">DISTRIBUTOR</div>
+                                <strong style="font-size:12px; color:#ffffff; white-space:nowrap;">D2: Vikas Whole.</strong>
+                            </div>
+                        </div>
+                        <div style="font-size:10px; color:#a1a1aa; margin-top:2px;">Tirupati, AP</div>
+                    </div>
+
+                    <!-- R1: Retailer -->
+                    <div id="node-R1" class="graph-node node-r1" onclick="inspectNode('R1')">
+                        <div class="node-header">
+                            <div class="node-icon-circle">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 5v14"></path><path d="M5 12h14"></path>
+                                </svg>
+                            </div>
+                            <div style="min-width:0;">
+                                <div style="font-size:9px; font-weight:700; color:#fbbf24;">PHARMACY POS</div>
+                                <strong style="font-size:12px; color:#ffffff; white-space:nowrap;">R1: Apollo #12</strong>
+                            </div>
+                        </div>
+                        <div style="font-size:10px; color:#a1a1aa; margin-top:2px;">Guntur, AP</div>
+                    </div>
+
+                    <!-- R2: Retailer -->
+                    <div id="node-R2" class="graph-node node-r2" onclick="inspectNode('R2')">
+                        <div class="node-header">
+                            <div class="node-icon-circle">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 5v14"></path><path d="M5 12h14"></path>
+                                </svg>
+                            </div>
+                            <div style="min-width:0;">
+                                <div style="font-size:9px; font-weight:700; color:#fbbf24;">PHARMACY POS</div>
+                                <strong style="font-size:12px; color:#ffffff; white-space:nowrap;">R2: MedPlus #45</strong>
+                            </div>
+                        </div>
+                        <div style="font-size:10px; color:#a1a1aa; margin-top:2px;">Vijayawada, AP</div>
+                    </div>
+
+                    <!-- R3: Retailer -->
+                    <div id="node-R3" class="graph-node node-r3" onclick="inspectNode('R3')">
+                        <div class="node-header">
+                            <div class="node-icon-circle">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 5v14"></path><path d="M5 12h14"></path>
+                                </svg>
+                            </div>
+                            <div style="min-width:0;">
+                                <div style="font-size:9px; font-weight:700; color:#fbbf24;">HEALTH MART</div>
+                                <strong style="font-size:12px; color:#ffffff; white-space:nowrap;">R3: City Care</strong>
+                            </div>
+                        </div>
+                        <div style="font-size:10px; color:#a1a1aa; margin-top:2px;">Mangalagiri, AP</div>
+                    </div>
+
+                </div>
+
+                <!-- Dynamic Node Detail Bar -->
+                <div id="nodeDetailsBanner" style="background:#18181b; border:1px solid var(--border-subtle); padding:14px 18px; border-radius:12px; font-size:13px; display:flex; justify-content:space-between; align-items:center;">
+                    <span style="color:var(--text-muted);">👉 Click on any supply chain facility node to inspect live stock, tier classification, and hop distance.</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB 2: BFS TRACE ENGINE                    -->
+        <!-- ========================================== -->
+        <div id="tab-trace" class="tab-pane">
+            <div class="grid-2">
+                
+                <!-- Engine Control Card -->
+                <div class="ash-card" style="display:flex; flex-direction:column; gap:16px;">
+                    <div>
+                        <h2 style="font-size:16px; font-weight:700; display:flex; align-items:center; gap:8px;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24"/><path d="m14.83 9.17 4.24-4.24"/><path d="m14.83 14.83 4.24 4.24"/><path d="m9.17 14.83-4.24 4.24"/></svg>
+                            Blast-Radius Traversal Engine
+                        </h2>
+                        <p style="font-size:12px; color:var(--text-muted); margin-top:4px;">
+                            Executes Breadth-First Search (BFS) in O(V + E) time using Java Collections FIFO Queue & Visited Set.
+                        </p>
+                    </div>
+
+                    <div>
+                        <label style="font-size:11px; font-weight:700; color:#a1a1aa; text-transform:uppercase; letter-spacing:0.5px;">Target Defective Batch</label>
+                        <select style="width:100%; background:#18181b; border:1px solid var(--border-subtle); color:white; padding:10px 14px; border-radius:10px; font-size:13px; margin-top:6px;">
+                            <option>BATCH-101 (Amoxicillin 500mg • Exp: 2027-08-15)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label style="font-size:11px; font-weight:700; color:#a1a1aa; text-transform:uppercase; letter-spacing:0.5px;">Root Traversal Origin</label>
+                        <select style="width:100%; background:#18181b; border:1px solid var(--border-subtle); color:white; padding:10px 14px; border-radius:10px; font-size:13px; margin-top:6px;">
+                            <option>M1 — Apex Pharmaceuticals Facility (Manufacturer)</option>
+                        </select>
+                    </div>
+
+                    <button class="btn-ash-primary" onclick="executeBfsTrace()" style="padding:12px; font-size:14px; justify-content:center;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                        Execute BFS Downstream Trace
+                    </button>
+
+                    <!-- PERFECTED 2x2 KPI CARDS (Spacious, No Cutoff!) -->
+                    <div class="kpi-container-2x2">
+                        
+                        <!-- KPI 1 -->
+                        <div class="kpi-box">
+                            <div class="kpi-icon-wrap" style="background:rgba(239, 68, 68, 0.15); color:#f87171;">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                            </div>
+                            <div class="kpi-content">
+                                <div class="kpi-title">IMPACTED SITES</div>
+                                <div class="kpi-number" style="color:#f87171;">6 Sites</div>
+                            </div>
+                        </div>
+
+                        <!-- KPI 2 (Spacious for 26,500) -->
+                        <div class="kpi-box">
+                            <div class="kpi-icon-wrap" style="background:rgba(245, 158, 11, 0.15); color:#fbbf24;">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                            </div>
+                            <div class="kpi-content">
+                                <div class="kpi-title">EXPOSED UNITS</div>
+                                <div class="kpi-number" style="color:#fbbf24;">26,500</div>
+                            </div>
+                        </div>
+
+                        <!-- KPI 3 -->
+                        <div class="kpi-box">
+                            <div class="kpi-icon-wrap" style="background:rgba(129, 140, 248, 0.15); color:#818cf8;">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                            </div>
+                            <div class="kpi-content">
+                                <div class="kpi-title">MAX HOP DEPTH</div>
+                                <div class="kpi-number" style="color:#818cf8;">3 Levels</div>
+                            </div>
+                        </div>
+
+                        <!-- KPI 4 -->
+                        <div class="kpi-box">
+                            <div class="kpi-icon-wrap" style="background:rgba(52, 211, 153, 0.15); color:#34d399;">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/></svg>
+                            </div>
+                            <div class="kpi-content">
+                                <div class="kpi-title">LATENCY</div>
+                                <div class="kpi-number" style="color:#34d399;">2.2 ms</div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Algorithmic Execution Terminal -->
+                <div class="ash-card" style="display:flex; flex-direction:column; gap:12px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <h3 style="font-size:14px; font-weight:700; color:#38bdf8; display:flex; align-items:center; gap:8px;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+                            Traversal Queue & Visited State Stream
+                        </h3>
+                        <span style="font-size:11px; color:#a1a1aa;">Cycle Protected: Visited HashSet</span>
+                    </div>
+
+                    <div id="bfsTerminal" class="terminal-box">
+                        <div style="color:#71717a;">Ready. Click 'Execute BFS Downstream Trace' to stream queue operations...</div>
+                    </div>
+
+                    <div style="font-size:11px; color:#a1a1aa; line-height:1.5;">
+                        <strong style="color:#f4f4f5;">Algorithmic Proof:</strong> BFS computes the exact minimum hop distance level-by-level, ensuring upstream distribution hubs are notified before secondary retail endpoints.
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Reachable Nodes Discovered Table -->
+            <div class="ash-card" style="margin-top:20px;">
+                <h3 style="font-size:15px; font-weight:700; margin-bottom:8px;">Reachable Downstream Facilities (Blast Radius)</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Facility ID</th>
+                            <th>Organization Name</th>
+                            <th>Supply Chain Role</th>
+                            <th>Hop Distance</th>
+                            <th style="text-align:right;">Exposed Quantity</th>
+                            <th>Downstream Traversal Path</th>
+                        </tr>
+                    </thead>
+                    <tbody id="blastRadiusTable"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB 3: RECALL COMMAND & DIGITAL KILL-SWITCH-->
+        <!-- ========================================== -->
+        <div id="tab-recall" class="tab-pane">
+            
+            <!-- Recall Header Card -->
+            <div class="ash-card" style="border:1.5px solid #27272a;">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;">
+                    <div>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <span style="background:#ef4444; color:white; font-size:10px; font-weight:800; padding:2px 8px; border-radius:6px; letter-spacing:0.5px;">ACTIVE RECALL CAMPAIGN</span>
+                            <strong style="font-size:18px;">RC-2001 (Class I Mandatory Recall)</strong>
+                        </div>
+                        <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">
+                            Linked Incident: <strong style="color:#f87171;">INC-301</strong> • Target Batch: <strong style="color:#fde047;">BATCH-101 (Amoxicillin 500mg)</strong> • Contamination Risk
+                        </div>
+                    </div>
+                    <div style="display:flex; gap:10px;">
+                        <button class="btn-ash-subtle" onclick="quarantineAllFacilities()">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                            Quarantine All Sites
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Recall Progress Bars -->
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:14px; margin-top:18px;">
+                    <div style="background:#18181b; padding:14px; border-radius:12px; border:1px solid var(--border-subtle);">
+                        <div style="display:flex; justify-content:space-between; font-size:11px; color:#a1a1aa;">
+                            <span>Facility Acknowledgement</span>
+                            <strong id="pctAck" style="color:#38bdf8;">67%</strong>
+                        </div>
+                        <div style="background:#27272a; height:7px; border-radius:99px; overflow:hidden; margin-top:8px;">
+                            <div id="barAckProgress" style="width:67%; height:100%; background:#38bdf8; border-radius:99px;"></div>
+                        </div>
+                    </div>
+
+                    <div style="background:#18181b; padding:14px; border-radius:12px; border:1px solid var(--border-subtle);">
+                        <div style="display:flex; justify-content:space-between; font-size:11px; color:#a1a1aa;">
+                            <span>Physical Stock Sealed</span>
+                            <strong id="pctQuar" style="color:#34d399;">50%</strong>
+                        </div>
+                        <div style="background:#27272a; height:7px; border-radius:99px; overflow:hidden; margin-top:8px;">
+                            <div id="barQuarProgress" style="width:50%; height:100%; background:#10b981; border-radius:99px;"></div>
+                        </div>
+                    </div>
+
+                    <div style="background:#18181b; padding:14px; border-radius:12px; border:1px solid var(--border-subtle);">
+                        <div style="font-size:11px; color:#a1a1aa;">Total Units Quarantined</div>
+                        <strong id="unitsQuarantined" style="font-size:18px; color:#34d399; margin-top:2px; display:block;">4,300</strong>
+                    </div>
+
+                    <div style="background:#18181b; padding:14px; border-radius:12px; border:1px solid var(--border-subtle);">
+                        <div style="font-size:11px; color:#a1a1aa;">Pending Action</div>
+                        <strong id="sitesPending" style="font-size:18px; color:#f87171; margin-top:2px; display:block;">3 Sites</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EMERGENCY DIGITAL BATCH KILL-SWITCH & E-COMMERCE SALES LOCK -->
+            <div class="kill-switch-box">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; border-bottom:1px solid rgba(239, 68, 68, 0.3); padding-bottom:14px; margin-bottom:16px;">
+                    <div>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <span style="background:#ef4444; color:white; font-size:11px; font-weight:800; padding:2px 8px; border-radius:6px; letter-spacing:0.8px;">DIGITAL KILL-SWITCH</span>
+                            <strong style="font-size:16px; color:#fca5a5;">E-Commerce & Retail POS Sales Lock</strong>
+                        </div>
+                        <div style="font-size:12px; color:#d4d4d8; margin-top:4px;">
+                            Blacklists the batch barcode across all connected online pharmacies (1mg, Apollo 24/7, Netmeds) and in-store cash register scanners.
+                        </div>
+                    </div>
+                    <div>
+                        <button id="btnToggleLock" onclick="toggleEmergencyLock()" class="btn-ash-primary" style="background:#dc2626; border-color:#ef4444;">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                            <span id="btnLockText">FREEZE ALL ONLINE & POS SALES</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Simulation Interactive Widget -->
+                <div class="grid-2" style="align-items:center;">
+                    <div style="background:#121215; padding:16px; border-radius:12px; border:1px solid var(--border-subtle);">
+                        <div style="font-size:11px; color:#a1a1aa; font-weight:700; margin-bottom:8px; text-transform:uppercase; letter-spacing:0.5px;">Simulate Customer Online Checkout / POS Scanner</div>
+                        <div style="display:flex; gap:10px;">
+                            <input type="text" value="BATCH-101 (Amoxicillin 500mg)" readonly style="flex:1; background:#09090b; border:1px solid var(--border-subtle); color:white; padding:10px 14px; border-radius:8px; font-size:12px; font-family:monospace;">
+                            <button onclick="testCheckoutSimulation()" class="btn-ash-primary" style="padding:10px 16px; font-size:12px;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                                Test Checkout
+                            </button>
+                        </div>
+                        <div style="font-size:11px; color:#71717a; margin-top:8px;">Simulates an e-commerce API purchase attempt or a pharmacy barcode cashier scan.</div>
+                    </div>
+
+                    <!-- Live Checkout Response Display -->
+                    <div id="checkoutResultCard" style="padding:16px; border-radius:12px; border:1px solid var(--border-subtle); background:#121215; min-height:85px; display:flex; align-items:center;">
+                        <div style="font-size:13px; color:#a1a1aa;">
+                            👉 Click <strong>'Test Checkout'</strong> to simulate customer transaction. Current gateway state: <span id="gatewayStatusBadge" style="color:#34d399; font-weight:bold;">UNLOCKED (Normal Sales)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Facilities Action Directives Table -->
+            <div class="ash-card" style="margin-top:20px;">
+                <h3 style="font-size:15px; font-weight:700; margin-bottom:8px;">Facility Recall Response Directives</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Facility Name</th>
+                            <th>Supply Chain Tier</th>
+                            <th>Notification Status</th>
+                            <th>Quarantine Status</th>
+                            <th style="text-align:right;">Sealed Quantity</th>
+                            <th style="text-align:center;">Interactive Directive Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recallTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB 4: SHIPMENT LEDGER                     -->
+        <!-- ========================================== -->
+        <div id="tab-ledger" class="tab-pane">
+            <div class="ash-card">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:14px;">
+                    <div>
+                        <h2 style="font-size:16px; font-weight:700;">Immutable Supply Chain Shipment Ledger</h2>
+                        <p style="font-size:12px; color:var(--text-muted); margin-top:2px;">Audit-verified chain of custody records stored with ACID transaction guarantees.</p>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Shipment ID</th>
+                            <th>Batch ID</th>
+                            <th>Source Facility (From)</th>
+                            <th>Destination Facility (To)</th>
+                            <th style="text-align:right;">Dispatched Units</th>
+                            <th style="text-align:center;">Dispatch Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ledgerTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // Data Structures
+        const nodesData = {
+            "M1": { name: "Apex Pharmaceuticals", type: "Manufacturer", loc: "Hyderabad, TS", units: 10000, hops: 0, status: "Origin Facility" },
+            "W1": { name: "Central Pharma Hub", type: "Warehouse Depot", loc: "Guntur, AP", units: 10000, hops: 1, status: "Quarantined (1,000 units on hand)" },
+            "W2": { name: "Coastal Depot", type: "Warehouse Depot", loc: "Vijayawada, AP", units: 0, hops: "Not Reached", status: "Untouched / Safe" },
+            "D1": { name: "MedLife Wholesalers", type: "Distributor", loc: "Amaravati, AP", units: 5000, hops: 2, status: "Quarantined (500 units on hand)" },
+            "D2": { name: "Vikas Wholesale", type: "Distributor", loc: "Tirupati, AP", units: 4000, hops: 2, status: "Pending Response" },
+            "R1": { name: "Apollo Pharmacy #12", type: "Retail Chemist", loc: "Guntur, AP", units: 3000, hops: 3, status: "Quarantined (2,800 units sealed)" },
+            "R2": { name: "MedPlus Chemist #45", type: "Retail Chemist", loc: "Vijayawada, AP", units: 2000, hops: 3, status: "Acknowledged (Pending count)" },
+            "R3": { name: "City Care Health Mart", type: "Retail Chemist", loc: "Mangalagiri, AP", units: 2500, hops: 3, status: "Pending Response" }
+        };
+
+        const shipmentsData = [
+            { id: "SHP-001", batch: "BATCH-101", from: "M1", to: "W1", qty: 10000, date: "2026-08-17" },
+            { id: "SHP-002", batch: "BATCH-101", from: "W1", to: "D1", qty: 5000, date: "2026-08-20" },
+            { id: "SHP-003", batch: "BATCH-101", from: "W1", to: "D2", qty: 4000, date: "2026-08-21" },
+            { id: "SHP-004", batch: "BATCH-101", from: "D1", to: "R1", qty: 3000, date: "2026-08-23" },
+            { id: "SHP-005", batch: "BATCH-101", from: "D1", to: "R2", qty: 2000, date: "2026-08-24" },
+            { id: "SHP-006", batch: "BATCH-101", from: "D2", to: "R3", qty: 2500, date: "2026-08-25" }
+        ];
+
+        let recallData = [
+            { id: "W1", name: "Central Pharma Hub Guntur", role: "WAREHOUSE", ack: true, quar: true, qty: 1000 },
+            { id: "D1", name: "MedLife Wholesalers Amaravati", role: "DISTRIBUTOR", ack: true, quar: true, qty: 500 },
+            { id: "D2", name: "Vikas Wholesale Tirupati", role: "DISTRIBUTOR", ack: false, quar: false, qty: 0 },
+            { id: "R1", name: "Apollo Pharmacy Store #12", role: "RETAILER", ack: true, quar: true, qty: 2800 },
+            { id: "R2", name: "MedPlus Chemist #45", role: "RETAILER", ack: true, quar: false, qty: 0 },
+            { id: "R3", name: "City Care Health Mart", role: "RETAILER", ack: false, quar: false, qty: 0 }
+        ];
+
+        let isOnlineBlocked = false;
+
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+            
+            const target = document.getElementById('tab-' + tabId);
+            if (target) target.classList.add('active');
+            if (btn) btn.classList.add('active');
+            
+            if (tabId === 'graph') {
+                setTimeout(() => renderGraphEdges(), 50);
+            }
+        }
+
+        function inspectNode(nodeId) {
+            const n = nodesData[nodeId];
+            const box = document.getElementById('nodeDetailsBanner');
+            box.innerHTML = `
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <div style="width:34px; height:34px; border-radius:8px; background:#27272a; display:flex; align-items:center; justify-content:center; color:#38bdf8; font-weight:bold;">
+                        ${nodeId}
+                    </div>
+                    <div>
+                        <strong style="color:#ffffff; font-size:14px;">${n.name}</strong> 
+                        <span style="font-size:11px; color:#38bdf8; background:#27272a; padding:2px 6px; border-radius:4px; margin-left:6px;">${n.type}</span>
+                        <div style="color:#a1a1aa; font-size:11px; margin-top:2px;">Location: ${n.loc} • Graph Hop Level: <strong style="color:#ffffff;">${n.hops}</strong></div>
+                    </div>
+                </div>
+                <div style="text-align:right;">
+                    <div style="color:#fbbf24; font-weight:700; font-size:14px;">${n.units.toLocaleString()} units recorded</div>
+                    <div style="font-size:11px; color:#34d399; margin-top:2px;">${n.status}</div>
+                </div>
+            `;
+        }
+
+        function renderGraphEdges(isAlert = false) {
+            const svg = document.getElementById('svgConnections');
+            svg.innerHTML = '';
+            const cRect = document.getElementById('canvasViewport').getBoundingClientRect();
+
+            shipmentsData.forEach(s => {
+                const elA = document.getElementById('node-' + s.from);
+                const elB = document.getElementById('node-' + s.to);
+                if (!elA || !elB) return;
+
+                const rA = elA.getBoundingClientRect();
+                const rB = elB.getBoundingClientRect();
+
+                const x1 = rA.right - cRect.left;
+                const y1 = rA.top + rA.height / 2 - cRect.top;
+                const x2 = rB.left - cRect.left;
+                const y2 = rB.top + rB.height / 2 - cRect.top;
+
+                const dx = (x2 - x1) * 0.45;
+                const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                p.setAttribute('d', `M ${x1} ${y1} C ${x1 + dx} ${y1}, ${x2 - dx} ${y2}, ${x2} ${y2}`);
+                p.setAttribute('fill', 'none');
+                p.setAttribute('stroke', isAlert ? '#f43f5e' : '#3f3f46');
+                p.setAttribute('stroke-width', isAlert ? '2.5' : '1.5');
+                p.setAttribute('marker-end', isAlert ? 'url(#arr-alert)' : 'url(#arr-def)');
+                svg.appendChild(p);
+            });
+        }
+
+        function executeBfsTrace() {
+            const term = document.getElementById('bfsTerminal');
+            term.innerHTML = '';
+            const steps = [
+                "[0.00ms] Initializing BFS Traversal Engine for BATCH-101...",
+                "[0.15ms] Enqueuing Origin Facility: M1 (Apex Pharmaceuticals, Mfg Plant)",
+                "[0.30ms] Visited Set initialized: { M1 }",
+                "----------------------------------------------------------------",
+                "[0.65ms] Level 0 Exploration: Dequeued M1",
+                "         -> Outgoing Edge: SHP-001 -> Central Hub W1 (Qty: 10,000)",
+                "         -> W1 not in visited set -> Visited = { M1, W1 }, Enqueue W1 (Hop 1)",
+                "----------------------------------------------------------------",
+                "[1.10ms] Level 1 Exploration: Dequeued W1",
+                "         -> Outgoing Edge: SHP-002 -> MedLife D1 (Qty: 5,000) -> Enqueue D1 (Hop 2)",
+                "         -> Outgoing Edge: SHP-003 -> Vikas D2 (Qty: 4,000) -> Enqueue D2 (Hop 2)",
+                "----------------------------------------------------------------",
+                "[1.65ms] Level 2 Exploration: Dequeued D1 & D2",
+                "         -> Edge SHP-004 -> Apollo Chemist R1 (Qty: 3,000) -> Enqueue R1 (Hop 3)",
+                "         -> Edge SHP-005 -> MedPlus Chemist R2 (Qty: 2,000) -> Enqueue R2 (Hop 3)",
+                "         -> Edge SHP-006 -> City Care Mart R3 (Qty: 2,500) -> Enqueue R3 (Hop 3)",
+                "----------------------------------------------------------------",
+                "[2.25ms] Level 3 Exploration: Dequeued R1, R2, R3 (Zero outgoing edges, Sink Nodes)",
+                "✔ BFS Traversal COMPLETE in 2.25 ms. Queue is empty.",
+                "✔ Downstream Blast Radius: 6 facilities, 26,500 total exposed units identified."
+            ];
+
+            let i = 0;
+            function logNext() {
+                if (i < steps.length) {
+                    const line = document.createElement('div');
+                    line.innerText = steps[i];
+                    if (steps[i].startsWith("✔")) line.style.color = "#34d399";
+                    else if (steps[i].startsWith("[")) line.style.color = "#38bdf8";
+                    term.appendChild(line);
+                    term.scrollTop = term.scrollHeight;
+                    i++;
+                    setTimeout(logNext, 50);
+                } else {
+                    highlightImpactedNodes();
+                }
+            }
+            logNext();
+        }
+
+        function highlightImpactedNodes() {
+            ["W1", "D1", "D2", "R1", "R2", "R3"].forEach(id => {
+                const el = document.getElementById('node-' + id);
+                if (el) el.classList.add('pulse-blast');
+            });
+            renderGraphEdges(true);
+        }
+
+        function resetGraphView() {
+            ["W1", "D1", "D2", "R1", "R2", "R3"].forEach(id => {
+                const el = document.getElementById('node-' + id);
+                if (el) el.classList.remove('pulse-blast');
+            });
+            renderGraphEdges(false);
+        }
+
+        function executeTraceFromGraph() {
+            const traceBtn = document.querySelectorAll('.nav-btn')[1];
+            switchTab('trace', traceBtn);
+            executeBfsTrace();
+        }
+
+        function renderRecallTable() {
+            const tb = document.getElementById('recallTableBody');
+            tb.innerHTML = '';
+            let aCount = 0, qCount = 0, qTotal = 0;
+
+            recallData.forEach(r => {
+                if (r.ack) aCount++;
+                if (r.quar) { qCount++; qTotal += r.qty; }
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${r.name}</strong> <span style="font-size:11px; color:#71717a;">(${r.id})</span></td>
+                    <td><span style="font-size:10px; font-weight:700; padding:2px 8px; border-radius:6px; background:#27272a; color:#d4d4d8;">${r.role}</span></td>
+                    <td>${r.ack ? '<span style="color:#38bdf8; font-weight:700;">✔ ACKNOWLEDGED</span>' : '<span style="color:#71717a;">NOTIFIED (Pending)</span>'}</td>
+                    <td>${r.quar ? '<span style="color:#34d399; font-weight:700;">🔒 QUARANTINED</span>' : '<span style="color:#f87171; font-weight:700;">NOT QUARANTINED</span>'}</td>
+                    <td style="text-align:right; font-weight:700; color:#fbbf24;">${r.qty.toLocaleString()}</td>
+                    <td style="text-align:center;">
+                        <button class="btn-ash-subtle" style="padding:4px 10px; font-size:11px;" onclick="toggleFacilityAck('${r.id}')">${r.ack ? 'Re-notify' : 'Acknowledge'}</button>
+                        <button class="btn-ash-subtle" style="padding:4px 10px; font-size:11px; ${r.quar ? 'background:#059669; color:white; border-color:#10b981;' : ''}" onclick="toggleFacilityQuar('${r.id}')">${r.quar ? 'Release' : 'Quarantine'}</button>
+                    </td>
+                `;
+                tb.appendChild(tr);
+            });
+
+            const total = recallData.length;
+            const aPct = Math.round((aCount / total) * 100);
+            const qPct = Math.round((qCount / total) * 100);
+
+            document.getElementById('pctAck').innerText = aPct + '%';
+            document.getElementById('barAckProgress').style.width = aPct + '%';
+            document.getElementById('pctQuar').innerText = qPct + '%';
+            document.getElementById('barQuarProgress').style.width = qPct + '%';
+            document.getElementById('unitsQuarantined').innerText = qTotal.toLocaleString();
+            document.getElementById('sitesPending').innerText = (total - qCount) + ' Sites';
+        }
+
+        function toggleFacilityAck(id) {
+            const item = recallData.find(x => x.id === id);
+            if (item) { item.ack = !item.ack; renderRecallTable(); }
+        }
+
+        function toggleFacilityQuar(id) {
+            const item = recallData.find(x => x.id === id);
+            if (item) {
+                item.quar = !item.quar;
+                item.ack = true;
+                if (item.quar && item.qty === 0) item.qty = 1500;
+                else if (!item.quar) item.qty = 0;
+                renderRecallTable();
+            }
+        }
+
+        function quarantineAllFacilities() {
+            recallData.forEach(r => {
+                r.ack = true;
+                r.quar = true;
+                if (r.qty === 0) r.qty = 1800;
+            });
+            renderRecallTable();
+        }
+
+        function toggleEmergencyLock() {
+            isOnlineBlocked = !isOnlineBlocked;
+            const btn = document.getElementById('btnToggleLock');
+            const btnText = document.getElementById('btnLockText');
+            const badge = document.getElementById('gatewayStatusBadge');
+            const resBox = document.getElementById('checkoutResultCard');
+
+            if (isOnlineBlocked) {
+                btnText.innerText = "UNFREEZE / PERMIT SALES";
+                btn.style.background = "#059669";
+                btn.style.borderColor = "#10b981";
+                badge.innerText = "LOCKED (Online Sales Forbidden)";
+                badge.style.color = "#f87171";
+                resBox.innerHTML = `
+                    <div style="color: #fca5a5; font-size: 13px;">
+                        <strong style="color: #f87171;">🚨 SALES FROZEN:</strong> Barcode for <strong>BATCH-101</strong> has been pushed to the national recall blacklist. Online e-commerce checkouts and store POS scanners are now actively blocking this product.
+                    </div>
+                `;
+            } else {
+                btnText.innerText = "FREEZE ALL ONLINE & POS SALES";
+                btn.style.background = "#dc2626";
+                btn.style.borderColor = "#ef4444";
+                badge.innerText = "UNLOCKED (Normal Sales)";
+                badge.style.color = "#34d399";
+                resBox.innerHTML = `
+                    <div style="color: #d4d4d8; font-size: 13px;">
+                        <strong style="color: #34d399;">✔ SALES UNLOCKED:</strong> Product batch is active and permitted for retail sale.
+                    </div>
+                `;
+            }
+        }
+
+        function testCheckoutSimulation() {
+            const resBox = document.getElementById('checkoutResultCard');
+            if (isOnlineBlocked) {
+                resBox.innerHTML = `
+                    <div style="background: rgba(225, 29, 72, 0.2); border: 1px solid #f43f5e; padding: 12px; border-radius: 10px; width: 100%;">
+                        <div style="color: #f87171; font-weight: bold; font-size: 13px;">⛔ CHECKOUT ABORTED (HTTP 403 FORBIDDEN)</div>
+                        <div style="color: #fecdd3; font-size: 12px; margin-top: 4px;">
+                            <strong>Reason:</strong> Safety Recall RC-2001 Active on Batch <strong>BATCH-101</strong>.<br>
+                            This item has been blocked by the manufacturer / drug regulator. Cashier scan rejected & online cart disabled.
+                        </div>
+                    </div>
+                `;
+            } else {
+                resBox.innerHTML = `
+                    <div style="background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; padding: 12px; border-radius: 10px; width: 100%;">
+                        <div style="color: #34d399; font-weight: bold; font-size: 13px;">✅ TRANSACTION APPROVED (HTTP 200 OK)</div>
+                        <div style="color: #a7f3d0; font-size: 12px; margin-top: 4px;">
+                            Batch <strong>BATCH-101</strong> is marked safe and active. Payment processed successfully.
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function populateBlastRadiusTable() {
+            const tb = document.getElementById('blastRadiusTable');
+            tb.innerHTML = '';
+            const rows = [
+                { id: "W1", name: "Central Pharma Hub Guntur", role: "Warehouse Depot", hops: 1, qty: "10,000", path: "M1 ➔ W1" },
+                { id: "D1", name: "MedLife Wholesalers", role: "Distributor", hops: 2, qty: "5,000", path: "M1 ➔ W1 ➔ D1" },
+                { id: "D2", name: "Vikas Wholesale", role: "Distributor", hops: 2, qty: "4,000", path: "M1 ➔ W1 ➔ D2" },
+                { id: "R1", name: "Apollo Pharmacy Store #12", role: "Retail Chemist", hops: 3, qty: "3,000", path: "M1 ➔ W1 ➔ D1 ➔ R1" },
+                { id: "R2", name: "MedPlus Chemist #45", role: "Retail Chemist", hops: 3, qty: "2,000", path: "M1 ➔ W1 ➔ D1 ➔ R2" },
+                { id: "R3", name: "City Care Health Mart", role: "Retail Chemist", hops: 3, qty: "2,500", path: "M1 ➔ W1 ➔ D2 ➔ R3" }
+            ];
+            rows.forEach(r => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong style="color:#ffffff;">${r.id}</strong></td>
+                    <td>${r.name}</td>
+                    <td><span style="font-size:10px; font-weight:700; padding:2px 8px; border-radius:6px; background:#27272a; color:#38bdf8;">${r.role}</span></td>
+                    <td style="color:#818cf8; font-weight:700;">Level ${r.hops}</td>
+                    <td style="text-align:right; color:#fbbf24; font-weight:700;">${r.qty}</td>
+                    <td style="font-family:ui-monospace, monospace; color:#d4d4d8;">${r.path}</td>
+                `;
+                tb.appendChild(tr);
+            });
+        }
+
+        function populateLedgerTable() {
+            const tb = document.getElementById('ledgerTableBody');
+            tb.innerHTML = '';
+            shipmentsData.forEach(s => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="color:#38bdf8; font-weight:700;">${s.id}</td>
+                    <td><span style="color:#fde047; font-weight:600;">${s.batch}</span></td>
+                    <td><strong>${s.from}</strong> <span style="font-size:11px; color:#71717a;">(${nodesData[s.from]?.name || ''})</span></td>
+                    <td><strong>${s.to}</strong> <span style="font-size:11px; color:#71717a;">(${nodesData[s.to]?.name || ''})</span></td>
+                    <td style="text-align:right; color:#34d399; font-weight:700;">${s.qty.toLocaleString()}</td>
+                    <td style="text-align:center; color:#a1a1aa;">${s.date}</td>
+                `;
+                tb.appendChild(tr);
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            populateLedgerTable();
+            populateBlastRadiusTable();
+            renderRecallTable();
+            setTimeout(() => renderGraphEdges(), 100);
+            window.addEventListener('resize', () => renderGraphEdges());
+        });
+    </script>
+</body>
+</html>
